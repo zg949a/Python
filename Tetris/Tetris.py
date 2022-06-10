@@ -9,7 +9,7 @@ cell_size = 40
 block_size = cell_size - 1
 block_edge = int(block_size /5)
 FPS = 50
-win_width = C * 2 * cell_size + 6 * cell_size
+win_width = C * cell_size
 win_hight = (R + 1) * cell_size	
 screen = pygame.display.set_mode((win_width, win_hight))
 pygame.display.set_caption("双人对战俄罗斯方块")
@@ -66,7 +66,7 @@ class Game_machine():
 		self.y = -1					#初始高度设为-1,保证方块在最顶部位置出现，研究每种方块第一形态坐标可以找到答案
 
 	def rand_key(self):
-		keys = [1,1,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,7,7]		#决定每种方块出现概率
+		keys = [1,1 ]#,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,7,7]		#决定每种方块出现概率
 		return keys[random.randint(0,len(keys)-1)]
 		
 	def move(self, dx, dy):
@@ -192,7 +192,7 @@ while True:
 	time.tick(FPS)
 	screen.fill((166,124,64))
 	player1.display()
-	player2.display()
+#	player2.display()
 	pygame.display.update()
 		
 	for event in pygame.event.get():
@@ -206,15 +206,15 @@ while True:
 			elif event.key == pygame.K_f:		
 				player1.fall_speed_up = True
 				
-			if event.key == pygame.K_RIGHT:		
-				player2.move(1,0)
-			elif event.key == pygame.K_LEFT:	
-				player2.move(-1,0)
-			elif event.key == pygame.K_UP:		
-				player2.rotate()
-			elif event.key == pygame.K_DOWN:	
-				player2.fall_speed_up = True
-				
+#			if event.key == pygame.K_RIGHT:		
+#				player2.move(1,0)
+#			elif event.key == pygame.K_LEFT:	
+#				player2.move(-1,0)
+#			elif event.key == pygame.K_UP:		
+#				player2.rotate()
+#			elif event.key == pygame.K_DOWN:	
+#				player2.fall_speed_up = True
+#				
 			elif event.key == pygame.K_q:
 				sys.exit()
 				

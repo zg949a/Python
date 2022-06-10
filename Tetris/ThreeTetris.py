@@ -9,10 +9,11 @@ cell_size = 40
 block_size = cell_size - 1
 block_edge = int(block_size /5)
 FPS = 50
-win_width = C * 2 * cell_size + 3 * cell_size
+p2 = (C + 1) * cell_size
+win_width = (C * 3) * cell_size + 2 * cell_size
 win_hight = (R + 1) * cell_size	
 screen = pygame.display.set_mode((win_width, win_hight))
-pygame.display.set_caption("双人对战俄罗斯方块")
+pygame.display.set_caption("三人对战俄罗斯方块")
 
 blocks = {
         1: [[(0,1),(1,1),(2,1),(3,1)],
@@ -179,42 +180,55 @@ class Game_machine():
 
 time = pygame.time.Clock()	
 player1 = Game_machine(0, 0)
-player2 = Game_machine((C + 3) * cell_size, 0)
+player2 = Game_machine(p2, 0)
+player3 = Game_machine((C * 2 + 2) * cell_size, 0)
 
 while True:
-	time.tick(FPS)
-	screen.fill((166,124,64))
-	player1.display()
-	player2.display()
-	pygame.display.update()
-		
-	for event in pygame.event.get():
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_g:
-				player1.move(1,0)
-			elif event.key == pygame.K_d:
-				player1.move(-1,0)
-			elif event.key == pygame.K_r:		
-				player1.rotate()
-			elif event.key == pygame.K_f:		
-				player1.fall_speed_up = True
-				
-			if event.key == pygame.K_RIGHT:		
-				player2.move(1,0)
-			elif event.key == pygame.K_LEFT:	
-				player2.move(-1,0)
-			elif event.key == pygame.K_UP:		
-				player2.rotate()
-			elif event.key == pygame.K_DOWN:	
-				player2.fall_speed_up = True
-				
-			elif event.key == pygame.K_q:
-				Game_machine.game_over()
+    time.tick(FPS)
+    screen.fill((166,124,64))
+    player1.display()
+    player2.display()
+    player3.display()
+    pygame.display.update()
 
-		elif event.type == pygame.KEYUP:
-			if event.key == pygame.K_f:
-				player1.fall_speed_up = False
-			if event.key == pygame.K_DOWN:
-				player2.fall_speed_up = False	
-		elif event.type == pygame.QUIT:
-			Game_machine.game_over()
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_g:
+                player1.move(1,0)
+            elif event.key == pygame.K_d:
+                player1.move(-1,0)
+            elif event.key == pygame.K_r:
+                player1.rotate()
+            elif event.key == pygame.K_f:		
+                player1.fall_speed_up = True
+                
+            if event.key == pygame.K_l:
+                player2.move(1,0)
+            elif event.key == pygame.K_h:
+                player2.move(-1,0)
+            elif event.key == pygame.K_k:
+                player2.rotate()
+            elif event.key == pygame.K_j:	
+                player2.fall_speed_up = True
+
+            if event.key == pygame.K_RIGHT:
+                player3.move(1,0)
+            elif event.key == pygame.K_LEFT:	
+                player3.move(-1,0)
+            elif event.key == pygame.K_UP:		
+                player3.rotate()
+            elif event.key == pygame.K_DOWN:	
+                player3.fall_speed_up = True
+
+            elif event.key == pygame.K_q:
+                Game_machine.game_over()
+
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_f:
+                player1.fall_speed_up = False
+            if event.key == pygame.K_j:
+                player2.fall_speed_up = False	
+            if event.key == pygame.K_DOWN:
+                player3.fall_speed_up = False	
+        elif event.type == pygame.QUIT:
+            Game_machine.game_over()
