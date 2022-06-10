@@ -65,7 +65,6 @@ class Game_machine():
 
 	def rand_key(self):
 		keys = [1,1,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,7,7]
-        #决定每种方块出现概率
 		return keys[random.randint(0,len(keys)-1)]
 
 	def move(self, dx, dy):
@@ -158,7 +157,6 @@ class Game_machine():
 		screen.blit(self.img, self.img_rect)
 				
 	def game_over(self):
-		#数据重新初始化后立即重新开始
 		self.__init__(self.x0, self.y0)
 						
 	def draw_block(self, color_index, draw_edge):
