@@ -1,0 +1,162 @@
+# 建立虚拟环境
+python -m venv ll_env
+ 
+#激活虚拟环境
+ll_env\Scripts\activate
+#安装Django
+pip install Django
+
+# 在Django中创建项目
+django-admin.py startproject learning_log .		#注意末尾有英文句号
+#新建了一个目录learning_log
+dir
+
+dir learning_log		#查询目录
+
+# 创建数据库
+python manage.py migrate
+
+dir
+
+# 查看项目
+python manage.py runserver
+
+# 创建应用程序
+ll_env\Scripts\activate
+
+python manage.py startapp learning_lops
+
+dir
+
+dir learning_lops
+
+# 定义模型
+from django.db import models
+
+class Topic(models.Model):
+    """用户学习的主题"""
+    text=models.CharField(max_length=200)
+    date_added=models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """返回模型的字符串表示"""
+        return self.text
+# 激活模型
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    
+    #我的应用程序
+    'learning_lops',
+]
+
+# 创建超级用户
+python manage.py createsuperuser
+
+# 向管理网站注册模型
+from django.contrib import admin
+
+from learning_lops.models import Topic
+
+admin.site.register(Topic)
+# 定义模型Entry
+class Entry(models.Model):
+    """学到的有关某个主题的具体知识"""
+    topic=models.ForeignKey(Topic,on_delete=models.CASCADE)
+    text=models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural='entries'
+
+    def __str__(self):
+        """返回模型的字符串表示"""
+        return self.text[:50]+"..."
+# 迁移模型Entry
+python manage.py makemigrations learning_lops
+
+python manage.py migrate
+# 向管理网站注册Entry
+from django.contrib import admin
+
+from learning_lops.models import Topic,Entry
+
+admin.site.register(Topic)
+admin.site.register(Entry)
+ # Django shell
+python manage.py shell
+
+from learning_lops.models import Topic
+
+Topic.objects.all()
+
+from learning_lops.models import Topic
+
+Topic.objects.all()
+
+topics=Topic.objects.all()
+for topic in topics:
+	print(topic.id,topic)
+
+#视图文件
+from django.shortcuts import render
+
+# Create your views here.
+
+from django.http import HttpResponse
+
+
+# django框架中写视图函数，必须要传参request
+def book(request):
+    return HttpResponse("图书首页")           # 返回值必须是 HttpResponse包裹住的类型
+
+
+# django框架中写视图函数，必须要传参request
+def index(request):
+    return HttpResponse("hello world")       # 返回值必须是 HttpResponse包裹住的类型
+# URL映射
+from django.contrib import admin
+from django.urls import path
+from book import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('book/',views.book_list)
+]
+#  url模块化
+from django.contrib import admin
+from django.urls import path, include   # include是url模块化
+
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    # path('book/', views.book),
+    # path('book/<book_id>/<cate_id>', views.book_detail),     # <book_id>必须与views.book_detail方法中的参数名称相同
+    # path('book_list/', views.book_list),          # 关键字传参，不需要在路由中写参数
+    
+    
+    # url模块化，定义book模块的前缀路由,关联book模块下的urls.py文件
+    path("book/", include("book.urls"))
+]
+# 创建管理页面
+# 创建管理员账号 admin
+python .\manage.py createsuperuser
+# 输入管理员账号名称
+Username (leave blank to use 'administrator'): admin_test
+# 输入Email地址
+Email address: admin_test@example.com
+# 输入密码
+Password:
+Password (again):
+The password is too similar to the username.
+Bypass password validation and create user anyway? [y/N]: y
+# 创建成功
+Superuser created successfully.
+
+
+
+

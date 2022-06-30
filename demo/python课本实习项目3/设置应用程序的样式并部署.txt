@@ -1,0 +1,469 @@
+#设置项目“学习笔记”的样式
+pip install django-bootstrap4
+INSTALLED_APPS = [
+    # My apps
+    'learning_logs',
+    'users',
+
+    # Third party apps
+    # - 新建一个名为“第三方应用程序”的片段，用于指定其他开发人员开发的应用程序，并在其中添加 'bootstrap4'
+    # - 务必将这个片段放在“我的应用程序”和“Django默认添加的应用程序”之间
+    'bootstrap4',
+
+    # Default django apps
+    'django.contrib.admin',
+    --snip--
+]
+
+# 修改 base.html
+
+<!--加载 django-bootstrap4 中的模板标签集-->
+{% load bootstrap4 %}
+
+<!--将这个文件声明为使用英语编写的 HTML 文档-->
+<!doctype html>
+<html lang="en">
+<!--HTML 文件分为两个主要部分：头部（head）和主体（body）-->
+<!--HTML 文件的头部不包含任何内容，只是向浏览器提供正确显示页面所需的信息-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+<!--包含一个 title 元素，在浏览器中打开网站“学习笔记”的页面时，浏览器的标题栏将显示该元素的内容-->
+    <title>Learning Log</title>
+
+<!--使用 django-bootstrap4 的一个自定义模板标签，让 Django 包含所有的 Bootstrap 样式文件-->
+<!--接下来的标签启用你可能在页面中使用的所有交互式行为，如可折叠的导航栏-->
+    {% bootstrap_css %}
+    {% bootstrap_javascript jquery='full' %}
+<!--结束标签-->
+</head>
+# 定义导航栏
+--snip--
+<!--第一个元素为起始标签<body>-->
+<!--HTML 文件的主体包含用户将在页面上看到的内容-->
+<body>
+
+<!--<nav>元素表示页面的导航链接部分-->
+<!--对于这个元素内的所有内容，都将根据此处的 navbar 和 navbar-expand-md 等选择器定义的 Bootstrap 样式规则来设置样式-->
+<!--navbar-light 和 bg-light 使用一种浅色主题来设置导航栏的颜色-->
+<!--mb-4 中的 mb 表示下边距（margin-bottom），这个选择器确保导航栏和页面其他部分之间有一些空白区域-->
+<!--border 在浅色背景周围添加很细的边框，将导航栏与页面其他部分分开-->
+  <nav class="navbar navbar-expand-md navbar-light bg-light mb-4 border">
+
+<!--指定在导航栏最左端显示项目名，并将其设置为到主页的链接，因为它将出现在这个项目的每个页面中-->
+<!--选择器 navbar-brand 设置这个链接的样式，使其比其他链接更显眼，这是一种网站推广方式-->
+    <a class="navbar-brand" href="{% url 'learning_logs:index' %}">Learning Log</a>
+
+<!--定义了一个按钮，它将在浏览器窗口太窄、无法水平显示整个导航栏时显示出来-->
+<!--如果用户单击这个按钮，将出现一个下拉列表，其中包含所有的导航元素-->
+<!--在用户缩小浏览器窗口或在屏幕较小的移动设备上显示网站时，collapse 会导致导航栏折叠起来-->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+<!--此处的 div（division 的缩写）开启了导航栏的一个新区域-->
+<!--我们创建页面时，将其分隔成多个区域，并指定要应用于各个区域的样式和行为规则-->
+<!--在<div>起始标签中定义的样式和行为规则将影响下一个结束标签</div>之前的所有元素-->
+<!--这里指定了屏幕或窗口太窄时将折叠起来的导航栏部分的起始位置-->
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+<!--定义了一组链接-->
+      <ul class="navbar-nav mr-auto">
+<!--Bootstrap 将导航元素定义为无序列表项，但使用的样式规则让它们一点也不像列表-->
+<!--导航栏中的每个链接或元素都能以列表项的方式定义-->
+<!--这里只有一个列表项——到显示所有主题的页面的链接-->
+        <li class="nav-item">
+          <a class="nav-link" href="{% ulr 'learning_logs:topics' %}">Topics</a>
+        </li>
+      </ul>
+<!--使用起始标签<ul>定义了另一组链接（你可根据需要在页面中包含任意数量的链接编组），这组链接与登录和注册相关，出现在导航栏最右端-->
+<!--选择器 ml-auto 表示自动左边距（margin-left-automatic），它根据导航栏包含的其他元素设置左边距，确保这组链接位于屏幕右边-->
+      <ul class="navbar-nav ml-auto">
+<!--if 代码块与以前使用的条件代码块相同，它根据用户是否已登录显示相应的消息-->
+<!--这个代码块比以前长一些，因为它现在包含一些样式规则-->
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+<!--<span>元素用于设置区域内一系列文本或元素的样式-->
+<!--这起初可能令人迷惑：为什么不嵌套<div>呢？毕竟有很多页面深度嵌套了<div>元素-->
+<!--这是因为<div>元素创建区域，而<span>元素不会-->
+<!--这里只是要设置导航栏中信息性文本（如已登录用户的名称）的样式，旨在让其外观与链接不同，以免用户忍不住去单击，因此使用了<span>-->
+            <span class="navbar-text">Hello, {{ user.username }}.</span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'users:logout' %}">Log out</a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'users:register' %}">Register</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'users:login' %}">Log in</a>
+          </li>
+        {% endif %}
+      </ul>
+<!--指出<div>元素（它包含将在屏幕太窄时折叠起来的导航栏部分）到此结束，然后指出整个导航栏到此结束-->
+<!--要在导航栏中添加其他链接，可在既有的<ul>元素中添加<li>元素，并使用这里演示的样式设置指令-->
+    </div>
+
+  </nav>
+<!--base.html 的余下部分包含页面的主要部分-->
+<!--<main>元素用于定义页面主体的最重要部分-->
+<!--此处指定了 Bootstrap 选择器 container，这是一种对页面元素进行编组的简单方式-->
+<!--我们将在这个容器中放置两个<div>元素-->
+  <main role="main" class="container">
+<!--第一个<div>元素包含一个 page_header 块，我们会在大多数页面中使用它来指定标题-->
+<!--为突出标题，设置内边距-->
+<!--内边距（padding）指的是元素内容和边框之间的距离-->
+<!--选择器 pb-2 是一个 Bootstrap 指令，将元素的下内边距设置为适度的值-->
+<!--外边距（margin）指的是元素的边框与其他元素之间的距离-->
+<!--我们只想在标题下面添加边框，因此使用选择器 border-bottom，它在 page_header 块的下面添加较细的边框-->
+      <div class="pb-2 mb-2 border-bottom">
+        {% block page_header %}{% endblock page_header%}
+      </div>
+<!--定义了另一个<div>元素，其中包含 content 块-->
+<!--我们没有对这个块指定样式，因此在具体的页面中，可根据需要设置内容的样式-->
+      <div>
+        {% block content %}{% endblock content%}
+      </div>
+<!--文件 base.html 的末尾是元素<main>、<body>和<html>的结束标签-->
+  </main>
+
+</body>
+
+</html>
+# 使用 jumbotron 设置主页的样式
+{% extends "learning_logs/base.html" %}
+
+<!--告诉 Django 接下来要定义 page_header 块包含的内容-->
+{% block page_header %}
+<!--jumbotron 就是应用了一系列样式设置指令的<div>元素-->
+<!--这里使用选择器 jumbotron 应用这组来自 Bootstrap 库的样式设置指令-->
+  <div class="jumbotron">
+<!--h1 类表示一级标题，而选择器 display-3 让这个标题显得更窄更高-->
+    <h1 class="display-3">Track your learning.</h1>
+
+    <p class="lead">Make your own learning log, and keep a list of the topics you're learning about. Whenever you learn something new about a topic, make an entry summarizing what you've learned.</p>
+
+<!--通过创建一个按钮（而不是文本链接）邀请用户注册账户-->
+<!--它与导航栏中的链接 Register 一样链接到的注册页面，但是按钮更显眼，并且让用户知道要使用这个项目首先需要如何做-->
+<!--这里的选择器让这个按钮很大，召唤用户赶快行动起来-->
+<!--代码 &raquo; 是一个 HTML 实体，表示两个右尖括号（>>）-->
+    <a class="btn btn-lg btn-primary" href="{% url 'users:register' %}" role="button">Register &raquo;</a>
+  </div>
+<!--结束 page_header 块-->
+{% endblock page_header %}
+<!--我们不想在这个页面中添加其他内容，因此不需要定义 content 块-->
+
+# 设置登录页面的样式
+{% extends "learning_logs/base.html" %}
+<!--在这个模板中加载 bootstrap4 模板标签-->
+{% load bootstrap4 %}
+
+<!--定义 page_header 块，指出这个页面是做什么用的-->
+<!--注意，我们从这个模板中删除了代码块 {% if form.errors %}，因为 django-bootstrap4 会自动管理表单错误-->
+{% block page_header %}
+  <h2>Log in to your account.</h2>
+{% endblock page_header %}
+
+{% block content %}
+<!--添加属性 class="form"-->
+  <form method="post" action="{% url 'users:login' %}" class="form">
+    {% csrf_token %}
+<!--再使用模板标签 {% bootstrap_form %} 来显示表单，它替换了第19章使用的标签 {{ form.as_p }}-->
+<!--模板标签 {% bootstrap_form %} 将 Bootstrap 样式规则应用于各个表单元素-->
+    {% bootstrap_form form %}
+<!--bootstrap4 起始模板标签 {% buttons %}，它将 Bootstrap 样式应用于按钮-->
+    {% buttons %}
+      <button name="submit" class="btn btn-primary">Log in</button>
+    {% endbuttons %}
+
+    <input type="hidden" name="next" value="{% url 'learning_logs:index' %}" />
+  </form>
+
+{% endblock content %}
+{% extends "learning_logs/base.html" %}
+
+<!--不需要标签 {% load bootstrap4 %}，因为这个文件中没有使用任何 bootstrap4 自定义标签-->
+<!--我们将标题 Topics 移到 page_header 块中，并给它指定标题样式，而没有使用简单的段落标签-->
+{% block page_header %}
+  <h1>Topics</h1>
+{% endblock page_header %}
+
+{% block content %}
+  <ul>
+    {% for topic in topics %}
+<!--将每个主题和添加新主题的链接都设置为<h3>元素，使其在页面上显得大一些-->
+      <li><h3>
+        <a href="{% url 'learning_logs:topic' topic.id %}">{{ topic }}</a>
+      </h3></li>
+    {% empty %}
+      <li><h3>No topics have been added yet.</h3></li>
+    {% endfor %}
+  </ul>
+
+  <h3><a href="{% url 'learning_logs:new_topic' %}">Add a new topic</a></h3>
+
+{% endblock content %}
+{% extends "learning_logs/base.html" %}
+
+<!--首先将主题放在 page_header 块中，并删除该模板中以前使用的无序列表结构-->
+{% block page_header %}
+  <h3>{{ topic }}</h3>
+{% endblock page_header %}
+
+{% block content %}
+  <p>
+    <a href="{% url 'learning_logs:new_entry' topic.id %}">Add new entry</a>
+  </p>
+
+  {% for entry in entries %}
+<!--创建一个带选择器 card 的 <div> 元素（而不是将每个条目作为一个列表项），其中包含两个嵌套的元素：一个包含条目的创建日期以及用于编辑条目的链接，另一个包含条目的内容-->
+    <div class="card mb-3">
+<!--嵌套的第一个元素是个标题-->
+<!--它是带选择器 card-header 的 <h4> 元素，包含条目的创建日期以及用于编辑条目的链接-->
+      <h4 class="card-header">
+        {{ entry.date_added|date:'M d, Y H:i' }}
+<!--用于编辑条目的链接放在标签 <small> 内，这让它看起来比时间戳小一些-->
+        <small><a href="{% url 'learning_logs:edit_entry' entry.id %}">edit entry</a></small>
+      </h4>
+<!--第二个嵌套的元素是一个带选择器 card-body 的 <div> 元素，将条目的内容放在一个简单的框内-->
+<!--注意我们只修改了影响页面外观的元素，对在页面中包含信息的 Django 代码未做任何修改-->
+      <div class="card-body">
+        {{ entry.text|linebreaks }}
+      </div>
+    </div>
+  {% empty %}
+    <p>There are no entries for this topic yet.</p>
+  {% endfor %}
+
+{% endblock content %}
+brew tap heroku/brew && brew install heroku
+# 为管理 Heroku 使用的数据库，psycopg2 包必不可少
+pip install psycopg2
+# django-heroku 包用于管理应用程序的各种配置，使其能够在 Heroku 服务器上正确地运行
+# 这包括管理数据库，以及将静态文件存储到合适的地方，以便能够妥善地提供它们
+# 静态文件包括样式规则和 JavaScript 文件
+pip install django-heroku
+# gunicorn 包让服务器能够实时地支持应用程序
+pip install gunicorn
+asgiref==3.5.0
+beautifulsoup4==4.10.0
+dj-database-url==0.5.0
+Django==4.0.3
+django-bootstrap4==22.1
+django-heroku==0.3.1
+gunicorn==20.1.0
+psycopg2==2.9.3
+pytz==2022.1
+soupsieve==2.3.1
+sqlparse==0.4.2
+whitenoise==6.0.0
+# Heroku settings
+# 导入了模块 django_heroku 并调用了函数 settings()
+# 这个函数将一些设置修改为 Heroku 环境要求的值
+import django_heroku
+django_heroku.settings(locals())
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git config --global user.name "Sally"      
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git config --global user.email "dangerousmile@sina.com"
+# 在“学习笔记”所在的目录中初始化一个空仓库
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git init
+hint: Using 'master' as the name for the initial branch. This default branch nam
+--snip--
+Initialized empty Git repository in /Users/chengrui/ProgramProjects/Python/python_crash_course/learning_log/.git/
+# (千万别忘了末尾的句点）将未被忽略的文件都加入这个仓库
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git add .
+# 标志 -a 让 Git 在这个提交中包含所有修改过的文件，而标志 -m 让 Git 记录一条日志消息
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git commit -am "Ready for development to heroku."
+Auto packing the repository in background for optimum performance.
+See "git help gc" for manual housekeeping.
+[master (root-commit) d33cadb] Ready for development to heroku.
+ 6120 files changed, 805368 insertions(+)
+ create mode 100644 .DS_Store
+--snip--
+# 输出表明当前位于分支 master，而工作树是干净（clean）的
+# 每当要将项目推送到 Heroku 时，我们都希望看到这样的状态
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git status
+On branch master
+nothing to commit, working tree clean
+# 这将打开浏览器并在其中显示一个页面，让你能够登录 Heroku
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % heroku login       
+--snip--
+Logging in... done
+Logged in as dangerousmile@sina.com
+# 让 Heroku 创建一个空项目
+# Heroku 生成的项目名由两个单词和一串数字组成，但以后可修改这个名称
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % heroku create
+Creating app... done,  cryptic-sea-37272
+https://cryptic-sea-37272.herokuapp.com/ | https://git.heroku.com/cryptic-sea-37272.git
+# 让 Git 将项目的分支 master 推送到 Heroku 刚才创建的仓库中
+# Heroku 将使用这些文件在其服务器上创建项目
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git push heroku master
+--snip--
+remote: -----> Launching...
+remote:        Released v20
+# 列出了用于访问这个项目的 URL，但这个 URL 和项目名都是可以修改的
+remote:        https://cryptic-sea-37272.herokuapp.com/ deployed to Heroku
+remote: 
+remote: Verifying deploy... done.
+To https://git.heroku.com/cryptic-sea-37272.git
+   8fb7bf9..135d300  master -> master
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % heroku ps 
+# 输出指出了在接下来的一个月内，项目还可在多长时间内处于活动状态
+# - Heroku 允许免费部署在一个月内最多有550小时处于活动状态
+# - 项目的活动时间超过这个限制后，将显示标准的服务器错误页面        
+Free dyno hours quota remaining this month: 550h 0m (100%)
+Free dyno usage for this app: 0h 0m (0%)
+For more information on dyno sleeping and how to upgrade, see:
+https://devcenter.heroku.com/articles/dyno-sleeping
+
+# 启动了 Procfile 指定的进程
+=== web (Free): gunicorn learning_log.wsgi --log-file - (1)
+web.1: up 2022/03/23 12:56:03 +0800 (~ 32s ago)
+# 首先执行命令h eroku run python manage.py migrate
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % heroku run python manage.py migrate
+# Heroku 随后创建一个终端会话来执行命令 migrate
+Running python manage.py migrate on ⬢ cryptic-sea-37272... up, run.7229 (Free)
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, learning_logs, sessions
+# Django 应用默认迁移以及我们在开发“学习笔记”期间生成的迁移
+Running migrations:
+  snip
+  Applying learning_logs.0001_initial... OK
+  Applying learning_logs.0002_entry... OK
+  Applying learning_logs.0003_topic_owner... OK
+  Applying sessions.0001_initial... OK
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % heroku run bash
+Running bash on  cryptic-sea-37272... up, run.9294 (Free)
+# 查看服务器上有哪些文件和目录
+# 服务器包含的文件和目录应与本地系统相同
+# 可像遍历其他文件系统一样遍历这个文件系统
+# 即便使用的是 Windows 系统，也应使用这里列出的命令（如 ls 而不是 dir），因为这里是在通过远程连接运行 Linux 终端
+ ls
+db.sqlite3    learning_logs  manage.py	requirements.txt  users
+learning_log  ll_env	     Procfile	runtime.txt
+# 执行创建超级用户的命令，它像第18章在本地系统创建超级用户一样提示你输入相关的信息
+  python manage.py createsuperuser
+Username (leave blank to use 'u38381'): ll_admin
+Email address: dangerousmile@sina.com
+Password: 
+Password (again): 
+Superuser created successfully.
+# 执行命令 exit 返回到本地系统的终端会话
+  exit
+exit
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % 
+# 给应用程序命名时，可使用字母、数字和连字符，并且想怎么命名都可以，只要指定的名称未被别人使用就行
+# 命令 apps:rename 将整个项目都移到了新的 URL 处
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % heroku apps:rename learning-log-sally0323
+Renaming cryptic-sea-37272 to learning-log-sally0323... done
+# 现在，项目的 URL 变成了 https://learning-log-sally0323.herokuapp.com/
+# 使用以前的 URL 再也无法访问它
+https://learning-log-sally0323.herokuapp.com/ | https://git.heroku.com/learning-log-sally0323.git
+     Don't forget to update git remotes for all other local checkouts of the
+     app.
+Git remote heroku updated
+# Heroku settings
+# 导入了模块 django_heroku 并调用了函数 settings()
+# 这个函数将一些设置修改为 Heroku 环境要求的值
+import django_heroku
+
+django_heroku.settings(locals())
+
+# 方法 os.environ.get() 从项目当前所处的环境中读取与特定环境变量相关联的值
+# 如果设置了这个环境变量，就返回它的值；如果没有设置，就返回 None
+# 使用环境变量来存储布尔值时，必须小心应对，因为在大多数情况下，环境变量存储的都是字符串
+if os.environ.get('DEBUG') == 'TRUE':
+    DEBUG = True
+elif os.environ.get('DEBUG') == 'FALSE':
+    DEBUG = False
+# 执行命令 git commit，并指定一条简短而有描述性的提交消息
+# 标志 -am 让 Git 提交所有修改过的文件，并记录一条日志消息
+# Git 找出唯一修改过的文件，并将所做的修改提交到仓库
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git commit -am "Set DEBUG based on environment variables."
+[master e2f6c6c] Set DEBUG based on environment variables.
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+ # 此处显示的状态表明:当前位于仓库的分支 master，没有任何未提交的修改
+ # 推送到 Heroku 前，必须检查状态并看到刚才所说的消息
+ # 如果没有看到这样的消息，就说明有未提交的修改，而这些修改将不会推送到服务器
+ # - 在这种情况下，可尝试再次执行命令 commit
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git status
+On branch master
+nothing to commit, working tree clean
+# 将修改后的仓库推送到 Heroku
+# Heroku 发现仓库发生了变化，因此重建项目，确保所有的修改都生效
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git push heroku master
+--snip--
+remote:        Released v21
+remote:        https://learning-log-sally0323.herokuapp.com/ deployed to Heroku
+remote: 
+remote: Verifying deploy... done.
+To https://git.heroku.com/learning-log-sally0323.git
+   135d300..e2f6c6c  master -> master
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % heroku config:set DEBUG=FALSE
+# 每当你在 Heroku 上设置环境变量时，Heroku 都将重启项目，让环境变量生效
+Setting DEBUG and restarting ⬢ learning-log-sally0323... done, v22
+DEBUG: FALSE
+<!--这个简单的模板指定了通用的404错误页面包含的信息，但该页面的外观与网站其他部分一致-->
+{% extends "learning_logs/base.html" %}
+
+{% block page_header %}
+  <h2>The item you requested is not available. (404)</h2>
+{% endblock page_header %}
+{% extends "learning_logs/base.html" %}
+
+{% block page_header %}
+  <h2>There is an internal error. (500)</h2>
+{% endblock page_header %}
+--snip--
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        # 这项修改让 Django 在根模板目录中查找错误页面模板
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        --snip--
+    },
+]
+--snip--
+--snip--
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+--snip--
+# 执行命令 git add .，因为我们在项目中创建了一些新文件，需要让 Git 跟踪它们
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git add .
+# 提交所做的修改
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git commit -am "Added custom 404 and 500 error pages."
+[master 9a97409] Added custom 404 and 500 error pages.
+ 4 files changed, 13 insertions(+), 1 deletion(-)
+ create mode 100644 templates/404.html
+ create mode 100644 templates/500.html
+ # 将修改后的项目推送到 Heroku
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % git push heroku master
+--snip--
+remote: Verifying deploy... done.
+To https://git.heroku.com/learning-log-sally0323.git
+   e2f6c6c..9a97409  master -> master
+# 导入 Django 快捷函数 get_object_or_404()
+# - 这个函数尝试从数据库获取请求的对象，如果这个对象不存在，就引发404异常
+from django.shortcuts import render, redirect, get_object_or_404
+--snip--
+@login_required
+def topic(request, topic_id):
+    """显示单个主题及其所有的条目"""
+    # 用 get_object_or_404() 替换函数 get()
+    topic = get_object_or_404(Topic, id=topic_id)
+(ll_env) chengrui@chengruis-MacBook-Air learning_log % heroku apps:destroy --app learning-log-sally0323
+     WARNING: This will delete learning-log-sally0323
+     including all add-ons.
+ # 你将被要求再次输入项目名，确认你确实要删除它
+     To proceed, type learning-log-sally0323 or re-run this
+     command with --confirm learning-log-sally0323
+
+> 
+
+
+
+
+
+
+
+
